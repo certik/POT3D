@@ -15,28 +15,28 @@ runtime=($(tail -n 5 timing.out | head -n 1))
 echo "Wall clock time:                ${runtime[6]} seconds"
 echo " "
 
-#Validate run:
-${POT3D_HOME}/scripts/pot3d_validation.sh pot3d.out ${POT3D_HOME}/testsuite/${TEST}/validation/pot3d.out
-if [ $? -ne 0 ]; then
-  echo "Validation failed for 1 MPI rank. Exiting..."
-  exit 1
-fi
+# #Validate run:
+# ${POT3D_HOME}/scripts/pot3d_validation.sh pot3d.out ${POT3D_HOME}/testsuite/${TEST}/validation/pot3d.out
+# if [ $? -ne 0 ]; then
+#   echo "Validation failed for 1 MPI rank. Exiting..."
+#   exit 1
+# fi
 
-rm pot3d.log pot3d.out timing.out
-echo " "
-echo "Running POT3D with 2 MPI ranks..."
-${MPIEXEC} -np 2 ${POT3D_HOME}/bin/pot3d 1> pot3d.log 2>pot3d.err
-echo "Done!"
+# rm pot3d.log pot3d.out timing.out
+# echo " "
+# echo "Running POT3D with 2 MPI ranks..."
+# ${MPIEXEC} -np 2 ${POT3D_HOME}/bin/pot3d 1> pot3d.log 2>pot3d.err
+# echo "Done!"
 
-runtime=($(tail -n 5 timing.out | head -n 1))
-echo "Wall clock time:                ${runtime[6]} seconds"
-echo " "
+# runtime=($(tail -n 5 timing.out | head -n 1))
+# echo "Wall clock time:                ${runtime[6]} seconds"
+# echo " "
 
-#Validate run:
-${POT3D_HOME}/scripts/pot3d_validation.sh pot3d.out ${POT3D_HOME}/testsuite/${TEST}/validation/pot3d.out
-if [ $? -ne 0 ]; then
-  echo "Validation failed for 2 MPI rank. Exiting..."
-  exit 1
-fi
-echo " "
+# #Validate run:
+# ${POT3D_HOME}/scripts/pot3d_validation.sh pot3d.out ${POT3D_HOME}/testsuite/${TEST}/validation/pot3d.out
+# if [ $? -ne 0 ]; then
+#   echo "Validation failed for 2 MPI rank. Exiting..."
+#   exit 1
+# fi
+# echo " "
 

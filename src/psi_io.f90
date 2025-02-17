@@ -731,27 +731,7 @@ end module
 !#######################################################################
 module ffopen_MOD
       contains
-      ! XX: Workaround, we wrapper 'ffopen' subroutine in a module
-      ! to ensure it isn't a global procedure, as LFortran doesn't
-      ! currently causes problems with it's compilation
       subroutine ffopen (iun,fname,mode,ierr)
-      !
-      !-----------------------------------------------------------------------
-      !
-      ! ****** Open file FNAME and link it to unit IUN.
-      !
-      ! ****** If there is an error, this routine returns IERR.ne.0.
-      !
-      !-----------------------------------------------------------------------
-      !
-      ! ****** When MODE='r', the file must exist.
-      ! ****** When MODE='w', the file is created.
-      ! ****** When MODE='rw', the file must exist, but can be overwritten.
-      ! ****** When MODE='a', the file is created if it does not exist,
-      ! ******                otherwise, it is appended.
-      !
-      !-----------------------------------------------------------------------
-      !
             implicit none
       !
       !-----------------------------------------------------------------------
@@ -761,45 +741,8 @@ module ffopen_MOD
             character(*) :: mode
             integer :: ierr
             logical :: ex
-      !
-      !-----------------------------------------------------------------------
-      !
             ierr=0
-      !
-            if (mode.eq.'r') then
-            open (iun,file=trim(fname),form="FORMATTED",status='old',err=900)
-            else if (mode.eq.'rw') then
-            open (iun,file=trim(fname),form="FORMATTED",status='replace',err=900)
-            else if (mode.eq.'w') then
-            open (iun,file=trim(fname),form="FORMATTED",status='new',err=900)
-            elseif (mode.eq.'a') then
-            inquire(file=trim(fname), exist=ex)
-            if (ex) then
-            open (iun,file=trim(fname),form="FORMATTED",position='append',err=900)
-            else
-            open (iun,file=trim(fname),form="FORMATTED",status='new',err=900)
-            end if
-            else
-            write (*,*)
-            write (*,*) '### ERROR in FFOPEN:'
-            write (*,*) '### Invalid MODE requested.'
-            write (*,*) 'MODE = ',mode
-            write (*,*) 'File name: ',trim(fname)
-            ierr=2
-            return
-            end if
-      !
-            return
-      !
-      900 continue
-      !
-            write (*,*)
-            write (*,*) '### ERROR in FFOPEN:'
-            write (*,*) '### Error while opening the requested file.'
-            write (*,*) 'File name: ',trim(fname)
-            write (*,*) 'MODE = ',mode
-            ierr=1
-      !
+            open (iun,file=trim(fname),form="FORMATTED",status='old')
       end subroutine
 end module ffopen_MOD
 !#######################################################################
