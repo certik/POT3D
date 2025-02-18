@@ -25,6 +25,11 @@
 # [Gauravs-MacBook-Air:45580] *** End of error message ***
 for i in {1..30}; do
     echo "Run $i:"
-    ./validate.sh; cat testsuite/validation/run/pot3d.err
+    ./validate.sh
+    if [ $? -ne 0 ]; then
+        echo "## Validation failed ##"
+        cat testsuite/validation/run/pot3d.err
+        exit 1
+    fi
     echo "--------------------------------"
 done
