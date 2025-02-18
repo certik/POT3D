@@ -23,7 +23,6 @@ program POT3D
     subroutine genmesh (nc,c)
         implicit none
         integer, intent(in) :: nc
-        real(r_typ), intent(in) :: c0,c1
         real(r_typ), dimension(nc), intent(out) :: c
         real(r_typ), dimension(:), allocatable :: dc
         c = 0.
