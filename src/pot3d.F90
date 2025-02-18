@@ -10,7 +10,6 @@ program POT3D
     implicit none
     real(r_typ), dimension(:), allocatable :: r_g
     integer :: ierr, tcheck
-    real(r_typ) :: r0=1._r_typ
     real(r_typ) :: r1=2.5_r_typ
     integer :: nrm1_g=62
     call MPI_Init_thread (MPI_THREAD_FUNNELED,tcheck,ierr)
@@ -26,7 +25,6 @@ program POT3D
         real(r_typ), dimension(nc), intent(out) :: c
         real(r_typ), dimension(:), allocatable :: dc
         c = 0.
-        c(1)=r0
         c(nc)=r1
         allocate (dc(nc))
         dc=cshift(c,-1)
