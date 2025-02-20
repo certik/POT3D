@@ -1,11 +1,11 @@
 set -ex
 
 CC=clang
-FC=lfortran
+FC=gfortran
 
 cd src
 ${CC} -Wall -g -I$CONDA_PREFIX/include -c mpi_wrapper.c
-${FC} -c pot3d.f90
+${FC} -fcheck=all -g -c pot3d.f90
 ${FC} mpi_wrapper.o pot3d.o -o pot3d -L$CONDA_PREFIX/lib -lmpi -Wl,-rpath,$CONDA_PREFIX/lib
 cp pot3d ../bin/
 cd ..
