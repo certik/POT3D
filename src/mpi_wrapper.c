@@ -188,7 +188,7 @@ void mpi_allreduce_wrapper(const double *sendbuf, double *recvbuf, int *count,
 
     // I'm a little doubtful: as how would it identify that this part
     // is supposed to be for MPI_SUM?
-    MPI_Op op = MPI_Op_f2c(*op_f);
+    MPI_Op_f2c(*op_f);
     /*
     hard-code values here:
     1. We've hard-coded op as "MPI_SUM" for now, as in POT3D codebase, it's always
