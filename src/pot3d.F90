@@ -602,16 +602,11 @@ module mpi
         call c_mpi_cart_sub(comm, remain_dims_i, newcomm, ierror)
     end subroutine
 end module mpi
-module number_types
-    use iso_fortran_env
-    implicit none
-    integer, parameter :: r_typ=REAL64
-end module
 
 program POT3D
     use mpi
-    use number_types
     implicit none
+    integer, parameter :: r_typ=8
     real(r_typ), dimension(:), allocatable :: r_g
     integer :: ierr, tcheck
     real(r_typ) :: r1=2.5_r_typ
