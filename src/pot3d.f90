@@ -21,10 +21,9 @@ program POT3D
     subroutine genmesh (nc,c)
         integer, intent(in) :: nc
         real(r_typ), dimension(nc), intent(out) :: c
-        real(r_typ), dimension(:), allocatable :: dc
+        real(r_typ), dimension(nc) :: dc
         c = 0.
         c(nc)=2.5_r_typ
-        allocate (dc(nc))
         dc=cshift(c,-1)
     end subroutine
 end program pot3d
