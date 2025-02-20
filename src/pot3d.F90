@@ -1,5 +1,14 @@
-module mpi_c_bindings
+module mpi
     implicit none
+    integer, parameter :: MPI_THREAD_FUNNELED = 1
+
+    interface MPI_Init_thread
+        module procedure MPI_Init_thread_proc
+    end interface MPI_Init_thread
+
+    interface MPI_Finalize
+        module procedure MPI_Finalize_proc
+    end interface MPI_Finalize
 
     interface
         subroutine c_mpi_init_thread(required, provided, ierr) bind(C, name="mpi_init_thread_wrapper")
@@ -14,24 +23,10 @@ module mpi_c_bindings
             integer(c_int), intent(out) :: ierr
         end subroutine c_mpi_finalize
     end interface
-end module mpi_c_bindings
-
-module mpi
-    implicit none
-    integer, parameter :: MPI_THREAD_FUNNELED = 1
-
-    interface MPI_Init_thread
-        module procedure MPI_Init_thread_proc
-    end interface MPI_Init_thread
-
-    interface MPI_Finalize
-        module procedure MPI_Finalize_proc
-    end interface MPI_Finalize
 
    contains
 
     subroutine MPI_Init_thread_proc(required, provided, ierr)
-        use mpi_c_bindings, only : c_mpi_init_thread
         use iso_c_binding, only: c_int
         integer, intent(in) :: required
         integer, intent(in) :: provided
@@ -48,7 +43,6 @@ module mpi
     end subroutine
 
     subroutine MPI_Finalize_proc(ierr)
-        use mpi_c_bindings, only: c_mpi_finalize
         use iso_c_binding, only: c_int
         integer, optional, intent(out) :: ierr
         integer :: local_ierr
