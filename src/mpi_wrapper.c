@@ -5,7 +5,7 @@
 
 void mpi_init_thread_wrapper() {
     int argc = 3;
-    char *argv[4];
+    char **argv = malloc((argc + 1) * sizeof(char *));
     argv[0] = strdup("my_program");
     argv[1] = strdup("-n");
     argv[2] = strdup("4");
