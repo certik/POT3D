@@ -20,7 +20,7 @@ program POT3D
 
     subroutine genmesh (nc,c)
         integer, intent(in) :: nc
-        real(dp), dimension(nc), intent(out) :: c
+        real(dp), dimension(nc), intent(inout) :: c
         real(dp), dimension(nc) :: dc
         c = 0
         c(nc) = 2.5_dp
