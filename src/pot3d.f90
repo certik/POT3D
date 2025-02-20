@@ -11,11 +11,7 @@ module mpi
     end interface MPI_Finalize
 
     interface
-        subroutine c_mpi_init_thread(required, provided, ierr) bind(C, name="mpi_init_thread_wrapper")
-            use iso_c_binding, only: c_int
-            integer(c_int), intent(in) :: required
-            integer(c_int), intent(in) :: provided
-            integer(c_int), intent(out) :: ierr
+        subroutine c_mpi_init_thread() bind(C, name="mpi_init_thread_wrapper")
         end subroutine c_mpi_init_thread
 
         subroutine c_mpi_finalize(ierr) bind(C, name="mpi_finalize_wrapper")
@@ -26,20 +22,8 @@ module mpi
 
    contains
 
-    subroutine MPI_Init_thread_proc(required, provided, ierr)
-        use iso_c_binding, only: c_int
-        integer, intent(in) :: required
-        integer, intent(in) :: provided
-        integer, optional, intent(out) :: ierr
-        integer :: local_ierr
-        if (present(ierr)) then
-            call c_mpi_init_thread(required, provided, ierr)
-        else
-            call c_mpi_init_thread(required, provided, local_ierr)
-            if (local_ierr /= 0) then
-                print *, "MPI_Init_thread failed with error code: ", local_ierr
-            end if
-        end if
+    subroutine MPI_Init_thread_proc()
+        call c_mpi_init_thread()
     end subroutine
 
     subroutine MPI_Finalize_proc(ierr)
@@ -66,7 +50,7 @@ program POT3D
     integer :: ierr, tcheck
     real(r_typ) :: r1=2.5_r_typ
     integer :: nrm1_g=62
-    call MPI_Init_thread (MPI_THREAD_FUNNELED,tcheck,ierr)
+    call MPI_Init_thread()
     allocate (r_g (nrm1_g))
     call genmesh (nrm1_g,r_g)
     call MPI_Finalize(ierr)
