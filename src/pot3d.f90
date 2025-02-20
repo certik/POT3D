@@ -7,23 +7,23 @@ program POT3D
         end subroutine c_mpi_finalize
     end interface
 
-    integer, parameter :: r_typ=8
-    real(r_typ), dimension(:), allocatable :: r_g
+    integer, parameter :: dp=8
+    real(dp), dimension(:), allocatable :: r_g
     integer :: ierr, tcheck
-    integer :: nrm1_g=62
+    integer :: N=62
     call c_mpi_init_thread()
-    allocate (r_g (nrm1_g))
-    call genmesh (nrm1_g,r_g)
+    allocate (r_g(N))
+    call genmesh (N,r_g)
     call c_mpi_finalize()
 
     contains
 
     subroutine genmesh (nc,c)
         integer, intent(in) :: nc
-        real(r_typ), dimension(nc), intent(out) :: c
-        real(r_typ), dimension(nc) :: dc
-        c = 0.
-        c(nc)=2.5_r_typ
+        real(dp), dimension(nc), intent(out) :: c
+        real(dp), dimension(nc) :: dc
+        c = 0
+        c(nc) = 2.5_dp
         dc=cshift(c,-1)
     end subroutine
 end program pot3d
