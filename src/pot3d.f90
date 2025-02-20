@@ -1,10 +1,4 @@
-module mpi
-    implicit none
-
-    interface MPI_Finalize
-        module procedure MPI_Finalize_proc
-    end interface MPI_Finalize
-
+program POT3D
     interface
         subroutine c_mpi_init_thread() bind(C, name="mpi_init_thread_wrapper")
         end subroutine c_mpi_init_thread
@@ -13,17 +7,6 @@ module mpi
         end subroutine c_mpi_finalize
     end interface
 
-   contains
-
-    subroutine MPI_Finalize_proc()
-        call c_mpi_finalize()
-    end subroutine
-
-end module mpi
-
-program POT3D
-    use mpi
-    implicit none
     integer, parameter :: r_typ=8
     real(r_typ), dimension(:), allocatable :: r_g
     integer :: ierr, tcheck
@@ -32,7 +15,7 @@ program POT3D
     call c_mpi_init_thread()
     allocate (r_g (nrm1_g))
     call genmesh (nrm1_g,r_g)
-    call MPI_Finalize()
+    call c_mpi_finalize()
 
     contains
 
