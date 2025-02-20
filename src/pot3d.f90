@@ -1,10 +1,5 @@
 module mpi
     implicit none
-    integer, parameter :: MPI_THREAD_FUNNELED = 1
-
-    interface MPI_Init_thread
-        module procedure MPI_Init_thread_proc
-    end interface MPI_Init_thread
 
     interface MPI_Finalize
         module procedure MPI_Finalize_proc
@@ -21,10 +16,6 @@ module mpi
     end interface
 
    contains
-
-    subroutine MPI_Init_thread_proc()
-        call c_mpi_init_thread()
-    end subroutine
 
     subroutine MPI_Finalize_proc(ierr)
         use iso_c_binding, only: c_int
@@ -50,7 +41,7 @@ program POT3D
     integer :: ierr, tcheck
     real(r_typ) :: r1=2.5_r_typ
     integer :: nrm1_g=62
-    call MPI_Init_thread()
+    call c_mpi_init_thread()
     allocate (r_g (nrm1_g))
     call genmesh (nrm1_g,r_g)
     call MPI_Finalize(ierr)
