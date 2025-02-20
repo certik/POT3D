@@ -19,6 +19,10 @@ void mpi_init_thread_wrapper() {
     }
 }
 
-void mpi_finalize_wrapper(int *ierr) {
-    *ierr = MPI_Finalize();
+void mpi_finalize_wrapper() {
+    int ierr = MPI_Finalize();
+    if (ierr != 0) {
+        printf("MPI_Finalize failed.\n");
+        abort();
+    }
 }

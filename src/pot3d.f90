@@ -9,26 +9,14 @@ module mpi
         subroutine c_mpi_init_thread() bind(C, name="mpi_init_thread_wrapper")
         end subroutine c_mpi_init_thread
 
-        subroutine c_mpi_finalize(ierr) bind(C, name="mpi_finalize_wrapper")
-            use iso_c_binding, only : c_int
-            integer(c_int), intent(out) :: ierr
+        subroutine c_mpi_finalize() bind(C, name="mpi_finalize_wrapper")
         end subroutine c_mpi_finalize
     end interface
 
    contains
 
-    subroutine MPI_Finalize_proc(ierr)
-        use iso_c_binding, only: c_int
-        integer, optional, intent(out) :: ierr
-        integer :: local_ierr
-        if (present(ierr)) then
-            call c_mpi_finalize(ierr)
-        else
-            call c_mpi_finalize(local_ierr)
-            if (local_ierr /= 0) then
-                print *, "MPI_Finalize failed with error code: ", local_ierr
-            end if
-        end if
+    subroutine MPI_Finalize_proc()
+        call c_mpi_finalize()
     end subroutine
 
 end module mpi
@@ -44,7 +32,7 @@ program POT3D
     call c_mpi_init_thread()
     allocate (r_g (nrm1_g))
     call genmesh (nrm1_g,r_g)
-    call MPI_Finalize(ierr)
+    call MPI_Finalize()
 
     contains
 
