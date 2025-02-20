@@ -218,11 +218,6 @@ module mpi
     ! this is probably not correct right now
     integer, allocatable :: MPI_STATUSES_IGNORE(:)
 
-    ! not used in pot3d.F90
-    interface MPI_Init
-        module procedure MPI_Init_proc
-    end interface MPI_Init
-
     interface MPI_Init_thread
         module procedure MPI_Init_thread_proc
     end interface MPI_Init_thread
@@ -230,83 +225,6 @@ module mpi
     interface MPI_Finalize
         module procedure MPI_Finalize_proc
     end interface MPI_Finalize
-
-    interface MPI_Comm_size
-        module procedure MPI_Comm_size_proc
-    end interface MPI_Comm_size
-
-    interface MPI_Bcast
-        module procedure MPI_Bcast_int
-        module procedure MPI_Bcast_real
-    end interface MPI_Bcast
-
-    interface MPI_Allgather
-        module procedure MPI_Allgather_int
-        module procedure MPI_Allgather_real
-    end interface MPI_Allgather
-
-    interface MPI_Isend
-        module procedure MPI_Isend_2d
-        module procedure MPI_Isend_3d
-    end interface
-
-    interface MPI_IRecv
-        module procedure MPI_IRecv_proc
-    end interface
-
-    interface MPI_Allreduce
-        module procedure MPI_Allreduce_scalar
-        module procedure MPI_Allreduce_1d
-        module procedure MPI_Allreduce_array
-    end interface
-
-    interface MPI_Wtime
-        module procedure MPI_Wtime_proc
-    end interface
-
-    interface MPI_Barrier
-        module procedure MPI_Barrier_proc
-    end interface
-
-    interface MPI_Comm_rank
-        module procedure MPI_Comm_rank_proc
-    end interface
-
-    interface MPI_Comm_split_type
-        module procedure MPI_Comm_split_type_proc
-    end interface
-
-    interface MPI_Recv
-        module procedure MPI_Recv_proc
-    end interface
-
-    interface MPI_Waitall
-        module procedure MPI_Waitall_proc
-    end interface
-
-    interface MPI_Ssend
-        module procedure MPI_Ssend_proc
-    end interface
-
-    interface MPI_Cart_create
-        module procedure MPI_Cart_create_proc
-    end interface
-
-    interface MPI_Cart_sub
-        module procedure MPI_Cart_sub_proc
-    end interface
-
-    interface MPI_Cart_shift
-        module procedure MPI_Cart_shift_proc
-    end interface
-
-    interface MPI_Dims_create
-        module procedure MPI_Dims_create_proc
-    end interface
-
-    interface MPI_Cart_coords
-        module procedure MPI_Cart_coords_proc
-    end interface
 
    contains
 
