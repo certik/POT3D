@@ -27,6 +27,5 @@ program POT3D
         c(nc)=r1
         allocate (dc(nc))
         dc=cshift(c,-1)
-        deallocate (dc)
     end subroutine
 end program pot3d
