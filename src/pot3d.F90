@@ -200,23 +200,6 @@ end module mpi_c_bindings
 module mpi
     implicit none
     integer, parameter :: MPI_THREAD_FUNNELED = 1
-    ! not sure if this is correct really
-    integer, parameter :: MPI_INTEGER = 0
-    integer, parameter :: MPI_REAL4 = 0
-    integer, parameter :: MPI_REAL8 = 1
-    integer, parameter :: MPI_COMM_TYPE_SHARED = 1
-    integer, parameter :: MPI_PROC_NULL = -1
-    integer, parameter :: MPI_SUCCESS = 0
-
-    integer, parameter :: MPI_COMM_WORLD = 0
-    real(8), parameter :: MPI_IN_PLACE = -1
-    integer, parameter :: MPI_SUM = 1
-    integer, parameter :: MPI_INFO_NULL = 0
-    integer :: MPI_STATUS_IGNORE = 0
-    ! NOTE: I've no idea for how to implement this, refer
-    ! see section 2.5.4 page 21 of mpi40-report.pdf
-    ! this is probably not correct right now
-    integer, allocatable :: MPI_STATUSES_IGNORE(:)
 
     interface MPI_Init_thread
         module procedure MPI_Init_thread_proc
