@@ -6778,9 +6778,9 @@ subroutine readbr (fname,br0_g,ierr)
 !
 ! ****** De-allocate the memory for the BN array and its scales.
 !
-      ! deallocate (bn)
-      ! deallocate (tn)
-      ! deallocate (pn)
+      deallocate (bn)
+      deallocate (tn)
+      deallocate (pn)
 !
 ! ****** Set Br to be periodic.
 !
