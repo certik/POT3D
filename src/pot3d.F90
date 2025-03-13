@@ -157,20 +157,6 @@ module vars
       implicit none
       character(256) :: br0file='br_input_tiny_bin.bin'
 end module
-subroutine set_flux
-      use number_types
-      use global_dims
-      use global_mesh
-      use local_dims
-      use local_mesh
-      use vars
-      implicit none
-      real(r_typ), dimension(:,:), allocatable :: br0_g
-      integer :: j,k,ierr
-      allocate (br0_g(nt_g,np_g))
-      call readbr (br0file,br0_g,ierr)
-      deallocate(br0_g)
-end subroutine
 subroutine readbr (fname,br0_g,ierr)
       use number_types
       use global_dims
@@ -248,11 +234,23 @@ program POT3D
       use global_mesh
       use local_dims
       use local_mesh
+      use number_types
+      use global_dims
+      use global_mesh
+      use local_dims
+      use local_mesh
+      use vars
       implicit none
+
+      real(r_typ), dimension(:,:), allocatable :: br0_g
+      integer :: j,k,ierr
+
       allocate (t_g (ntm1_g))
       allocate (th_g (nt_g))
       allocate (ph_g (np_g))
       allocate (r (nrm))
       allocate (rh (nr))
-      call set_flux
+      allocate (br0_g(nt_g,np_g))
+      call readbr (br0file,br0_g,ierr)
+      deallocate(br0_g)
 end program pot3d
