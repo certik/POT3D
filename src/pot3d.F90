@@ -1,15 +1,7 @@
-module ident
-      implicit none
-      character(*), parameter :: idcode='POT3D'
-      character(*), parameter :: vers  ='4.3.1'
-      character(*), parameter :: update='12/05/2024'
-end module
 module number_types
       use iso_fortran_env
       implicit none
-      integer, parameter :: KIND_REAL_4=REAL32
       integer, parameter :: KIND_REAL_8=REAL64
-      integer, parameter :: KIND_REAL_16=max(REAL128,REAL64)
       integer, parameter :: r_typ=KIND_REAL_8
 end module
 module number_types_pc
@@ -119,17 +111,12 @@ module vars
       character(3) :: fmt='h5'
 end module
 program POT3D
-      use ident
       use mpidefs
       implicit none
       integer :: ierr
       call init_mpi
-      if (iamp0) then
-        write (*,*)
-        write (*,*) idcode,' Version ',vers,', updated on ',update
-      end if
       call read_input_file
-      call check_proc_topology
+      ! call check_proc_topology
       call allocate_global_arrays
       call allocate_local_arrays_r
       call set_flux
@@ -141,7 +128,6 @@ subroutine read_input_file
             use mpidefs
             use meshdef
             use vars
-            use decomposition_params
             implicit none
             integer :: nr=63
             integer :: nt=91
@@ -195,10 +181,6 @@ subroutine set_proc_topology
       integer :: i,j,k,num_fac,num_rank_fac,best_idx
       integer :: fr=1,ft=1,fp=1
       real(r_typ) :: a12,a13,a23
-      nproc_r=nprocs(1)
-      nproc_t=nprocs(2)
-      nproc_p=nprocs(3)
-      if(nproc_r.ne.-1.and.nproc_t.ne.-1.and.nproc_p.ne.-1) return
       i=1
       num_fac=0
       do while(i.le.nproc)
@@ -207,95 +189,11 @@ subroutine set_proc_topology
         endif
         i=i+1
       enddo
-      allocate (factors(num_fac))
-      i=1
-      num_fac=0
-      do while(i.le.nproc)
-        if (MOD(nproc,i).eq.0) then
-          num_fac=num_fac+1
-          factors(num_fac)=i
-        endif
-        i=i+1
-      enddo
-      a12=one
-      a13=one
-      a23=one
-      if (nproc_r.ne.-1) then
-        fr=nproc_r
-        a12=zero
-        a13=zero
-      end if
-      if (nproc_t.ne.-1) then
-        ft=nproc_t
-        a12=zero
-        a23=zero
-      end if
-      if (nproc_p.ne.-1) then
-        fp=nproc_p
-        a13=zero
-        a23=zero
-      end if
-      num_rank_fac=0
-      do k=1,num_fac
-        do j=1,num_fac
-          do i=1,num_fac
-            if(nproc_r.eq.-1) fr=factors(i)
-            if(nproc_t.eq.-1) ft=factors(j)
-            if(nproc_p.eq.-1) fp=factors(k)
-            if (fr*ft*fp.eq.nproc) then
-              num_rank_fac=num_rank_fac+1
-            end if
-          enddo
-        enddo
-      enddo
-      allocate(rank_factors(num_rank_fac,3))
-      allocate(nperrank(num_rank_fac,3))
-      allocate(penalty(num_rank_fac))
-      rank_factors(:,:)=-1
-      penalty(:)=bigval
-      num_rank_fac=0
-      do k=1,num_fac
-        do j=1,num_fac
-          do i=1,num_fac
-            if(nproc_r.eq.-1) fr=factors(i)
-            if(nproc_t.eq.-1) ft=factors(j)
-            if(nproc_p.eq.-1) fp=factors(k)
-            if (fr*ft*fp.eq.nproc) then
-              num_rank_fac=num_rank_fac+1
-              rank_factors(num_rank_fac,1)=fr
-              rank_factors(num_rank_fac,2)=ft
-              rank_factors(num_rank_fac,3)=fp
-            end if
-          enddo
-        enddo
-      enddo
-      nperrank(:,1)=real(nr_g)/rank_factors(:,1)
-      nperrank(:,2)=real(nt_g)/rank_factors(:,2)
-      nperrank(:,3)=real(np_g)/rank_factors(:,3)
-      penalty(:)=a12*(nperrank(:,1)-nperrank(:,2))**2 &
-                +a23*(nperrank(:,2)-nperrank(:,3))**2 &
-                +a13*(nperrank(:,3)-nperrank(:,1))**2
-      do i=1,num_rank_fac
-        if (nperrank(i,1).lt.4) penalty(i)=bigval
-        if (nperrank(i,2).lt.4) penalty(i)=bigval
-        if (nperrank(i,3).lt.3) penalty(i)=bigval
-      enddo
-      best_idx=MINLOC(penalty,1)
-      nprocs(1)=rank_factors(best_idx,1)
-      nprocs(2)=rank_factors(best_idx,2)
-      nprocs(3)=rank_factors(best_idx,3)
-      deallocate(factors)
-      deallocate(rank_factors)
-      deallocate(nperrank)
-      deallocate(penalty)
 end subroutine
 subroutine check_proc_topology
       use mpidefs
-      use decomposition_params
       implicit none
-      integer :: i,nreq
       call set_proc_topology
-      nreq=nprocs(1)*nprocs(2)*nprocs(3)
 end subroutine
 subroutine allocate_global_arrays
       use global_dims
@@ -392,74 +290,22 @@ subroutine intrp2d (nxi,nyi,xi,yi,fi,nx,ny,x,y,f,ierr)
       real(r_typ), dimension(nx,ny) :: f
       integer :: ierr
       real(r_typ), parameter :: zero=0._r_typ
-      real(r_typ), external :: flint
       integer :: i,j,ii,jj
       real(r_typ) :: dum(1)=0.
-      real(r_typ) :: dummy,xv,yv,ax,ay
+      real(r_typ) :: xv,yv,ax,ay
       ierr=0
-      dummy=flint(zero,nxi,xi,dum,1,ierr)
-      if (ierr.ne.0) go to 900
-      dummy=flint(zero,nyi,yi,dum,1,ierr)
-      if (ierr.ne.0) go to 900
       do j=1,ny
         yv=y(j)
-        if (yv.lt.yi(1).or.yv.gt.yi(nyi)) then
-          go to 910
-        end if
         call interp (yi,nyi,yv,jj,ay)
         do i=1,nx
           xv=x(i)
-          if (xv.lt.xi(1).or.xv.gt.xi(nxi)) then
-            go to 910
-          end if
           call interp (xi,nxi,xv,ii,ax)
           f(i,j)= (1.-ax)*((1.-ay)*fi(ii  ,jj  )+ay*fi(ii  ,jj+1)) &
                  +    ax *((1.-ay)*fi(ii+1,jj  )+ay*fi(ii+1,jj+1))
         enddo
       enddo
       return
-  900 continue
-      write (*,*)
-      write (*,*) '### ERROR in INTRP2D:'
-      write (*,*) '### Scales are not monotonically increasing.'
-      ierr=1
-      return
-  910 continue
-      write (*,*)
-      write (*,*) '### ERROR in INTRP2D:'
-      write (*,*) '### An interpolation was attempted outside the'// &
-                  ' range of the defined scales.'
-      ierr=2
 end subroutine
-function flint (x,n,xn,fn,icheck,ierr)
-      use number_types
-      implicit none
-      real(r_typ) :: flint
-      real(r_typ) :: x
-      integer :: n
-      real(r_typ), dimension(n) :: xn,fn
-      integer :: icheck
-      integer :: ierr
-      integer :: i,j
-      real(r_typ) :: x1,x2,alpha
-      ierr=0
-      flint=0.
-      if (x.le.xn(1)) then
-        flint=fn(1)
-      else if (x.gt.xn(n)) then
-        flint=fn(n)
-      else
-        do 200 i=1,n-1
-          if (x.ge.xn(i).and.x.lt.xn(i+1)) go to 300
-  200   continue
-  300   continue
-        x1=xn(i)
-        x2=xn(i+1)
-        alpha=(x-x1)/(x2-x1)
-        flint=fn(i)*(1.-alpha)+fn(i+1)*alpha
-      end if
-      return
-end function
 subroutine interp (x,n,xv,i,alpha)
       use number_types
       implicit none
