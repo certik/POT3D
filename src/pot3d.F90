@@ -157,13 +157,6 @@ module vars
       implicit none
       character(256) :: br0file='br_input_tiny_bin.bin'
 end module
-subroutine allocate_local_arrays_r
-      use local_dims
-      use local_mesh
-      implicit none
-      allocate (r (nrm))
-      allocate (rh (nr))
-end subroutine
 subroutine set_flux
       use number_types
       use global_dims
@@ -253,10 +246,13 @@ end subroutine
 program POT3D
       use global_dims
       use global_mesh
+      use local_dims
+      use local_mesh
       implicit none
       allocate (t_g (ntm1_g))
       allocate (th_g (nt_g))
       allocate (ph_g (np_g))
-      call allocate_local_arrays_r
+      allocate (r (nrm))
+      allocate (rh (nr))
       call set_flux
 end program pot3d
