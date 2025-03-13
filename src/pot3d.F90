@@ -28,30 +28,15 @@ module global_mesh
       use number_types
       use constants
       implicit none
-      real(r_typ), dimension(:), allocatable :: r_g
       real(r_typ), dimension(:), allocatable :: t_g,th_g
-      real(r_typ), dimension(:), allocatable :: p_g,ph_g
-      real(r_typ), parameter, private :: one=1._r_typ
-      real(r_typ), parameter, private :: two=2._r_typ
-      real(r_typ) :: r0=1._r_typ
-      real(r_typ), parameter :: t0=0.
-      real(r_typ), parameter :: p0=0.
-      real(r_typ), parameter :: p1=two*pi
-      real(r_typ), parameter :: pl=p1-p0
+      real(r_typ), dimension(:), allocatable :: ph_g
 end module
 module local_mesh
       use number_types
       implicit none
       real(r_typ), dimension(:), allocatable :: r,rh
-      real(r_typ), dimension(:), allocatable :: t,th,dt
+      real(r_typ), dimension(:), allocatable :: t,dt
       real(r_typ), dimension(:), allocatable :: p,ph
-end module
-module fields
-      use number_types
-      implicit none
-      real(r_typ), dimension(:,:), allocatable :: br0
-      real(r_typ), dimension(:,:), allocatable :: br1
-      real(r_typ), dimension(:,:,:), allocatable :: br,bt,bp
 end module
 
 module vars
@@ -61,7 +46,6 @@ module vars
 end module
 program POT3D
       implicit none
-      integer :: ierr,tcheck
       call allocate_global_arrays
       call allocate_local_arrays_r
       call set_flux
@@ -70,25 +54,16 @@ subroutine allocate_global_arrays
       use global_dims
       use global_mesh
       implicit none
-      allocate (r_g (nrm1_g))
       allocate (t_g (ntm1_g))
       allocate (th_g (nt_g))
-      allocate (p_g  (np_g))
       allocate (ph_g (np_g))
 end subroutine
 subroutine allocate_local_arrays_r
       use local_dims
       use local_mesh
-      use fields
       implicit none
       allocate (r (nrm))
       allocate (rh (nr))
-      allocate (br(nrm,nt,np))
-      allocate (bt(nr,ntm,np))
-      allocate (bp(nr,nt,npm))
-      br(:,:,:)=0.
-      bt(:,:,:)=0.
-      bp(:,:,:)=0.
 end subroutine
 subroutine set_flux
       use number_types
@@ -96,7 +71,6 @@ subroutine set_flux
       use global_mesh
       use local_dims
       use local_mesh
-      use fields
       use vars
       implicit none
       real(r_typ), dimension(:,:), allocatable :: br0_g
@@ -115,7 +89,6 @@ subroutine readbr (fname,br0_g,ierr)
       character(*) :: fname
       real(r_typ), dimension(nt_g,np_g) :: br0_g
       integer :: ierr
-      real(r_typ), parameter :: two=2._r_typ
       real(r_typ), dimension(:,:), pointer :: bn
       real(r_typ), dimension(:), pointer :: tn,pn
       integer :: ntn,npn,j,k
